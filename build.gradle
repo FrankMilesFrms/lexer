@@ -1,0 +1,15 @@
+import javax.tools.JavaCompiler
+
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.jetbrains:annotations-java5:15.0'
+}
+tasks.withType(JavaCompile)
+        {
+            options.encoding = "UTF-8"
+        }
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
