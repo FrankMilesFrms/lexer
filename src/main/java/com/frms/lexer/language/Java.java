@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
+ * <p>已过时</p>
  * <p>
  *     语法关键字部分使用基于 JDK 8 版本。
  * </p>
@@ -76,13 +77,13 @@ public class Java extends Token
                         {
                             if( next() == TAG.EOF )
                             {
-                                mModules.add(new Module(TAG.ZHUSHI, index - indexSign - 1));
+                                mModules.add(new Module(TAG.ZHUSHI_LINE, index - indexSign - 1));
                                 break main;
                             }
                             else if(mChars[index] == TAG.EOL)
                             {
                                 
-                                mModules.add(new Module(TAG.ZHUSHI, index - indexSign - 1));
+                                mModules.add(new Module(TAG.ZHUSHI_LINE, index - indexSign - 1));
                                 mModules.add(new Module(TAG.COMMON, 1));
                                 line++;
                                 break main;
@@ -110,7 +111,7 @@ public class Java extends Token
                             if(npeek == TAG.EOL)
                             {
                                 
-                                if(lengthSymbol > 1)mModules.add(new Module(TAG.ZHUSHI, lengthSymbol - 1));
+                                if(lengthSymbol > 1)mModules.add(new Module(TAG.ZHUSHI_BLOCK, lengthSymbol - 1));
                                 mModules.add(new Module(TAG.COMMON, 1));
                                 line++;
                                 lengthSymbol = 0;
@@ -118,7 +119,7 @@ public class Java extends Token
                             if(npeek == TAG.EOF)
                             {
                                 if(lengthSymbol > 1)
-                                    mModules.add(new Module(TAG.ZHUSHI, lengthSymbol - 1));
+                                    mModules.add(new Module(TAG.ZHUSHI_BLOCK, lengthSymbol - 1));
                                 break cyc;
                             } else
                             if(npeek == '*')
@@ -126,7 +127,7 @@ public class Java extends Token
                                 if(next() == '/')
                                 {
                                     hasEnd = true;
-                                    mModules.add(new Module(TAG.ZHUSHI, lengthSymbol + 1));
+                                    mModules.add(new Module(TAG.ZHUSHI_BLOCK, lengthSymbol + 1));
                                     lengthSymbol = 0;
                                     break cyc;
                                 } else
@@ -303,11 +304,11 @@ public class Java extends Token
                             module = mModules.get(i);
                             if(module.getFirst() != TAG.COMMON)
                             {
-                                module.setFirst(TAG.ZHUSHI);
+                                module.setFirst(TAG.ZHUSHI_BLOCK);
                                 mModules.set(i, module);
                             }
                         }
-                        mModules.add(new Module(TAG.ZHUSHI, 2));
+                        mModules.add(new Module(TAG.ZHUSHI_BLOCK, 2));
                     } else
                     {
                         symbolLength++;

@@ -6,7 +6,11 @@ public class TAG
                              EOF = '\uFFFF';
     
     public static final int COMMON = 0,
-                            ZHUSHI = 1,
+    
+                            ZHUSHI_LINE = 1,
+                            ZHUSHI_BLOCK = 0x102,
+                            
+    
                             STRING = 2,
                             SYMBOL = 3,
                             INTENGER = 4,
@@ -14,6 +18,7 @@ public class TAG
                             CONSTANT = 51,
                             UNKNOW = 0Xaa;
     
+    public static int ZHUSHI_DOC = 0x103;
     public static final String[] JavaScript_keyWords =
         {
             "Infinity", "JSON", "NaN", "arguments", "break",

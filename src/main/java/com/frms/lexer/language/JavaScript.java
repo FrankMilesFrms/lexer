@@ -32,11 +32,16 @@ public class JavaScript extends Token
     private StringBuffer log;
     private ArrayList<Module> mModules;
     
-    int lengthSymbol = 0;
-    char peek, npeek;
-    int indexSign;
-    boolean hasEnd = false; // 是否处于完整符号中
-    StringBuffer text;
+    /**
+     * 是否启用DOC注释高亮，并且他会优化注释结构，不再以 * / 以前文本视为注释。
+     */
+    private boolean useDocAnnotation = false;
+    
+    private static int lengthSymbol = 0;
+    private static char peek, npeek;
+    private static int indexSign;
+    private static boolean hasEnd = false; // 是否处于完整符号中
+    private static StringBuffer text;
     
     @Override
     public void token(int start, int startLine, int end, int endLine)
@@ -70,13 +75,13 @@ public class JavaScript extends Token
                         {
                             if( next() == TAG.EOF )
                             {
-                                mModules.add(new Module(TAG.ZHUSHI, index - indexSign - 1));
+                                mModules.add(new Module(TAG.ZHUSHI_LINE, index - indexSign - 1));
                                 break main;
                             }
                             else if(mChars[index] == TAG.EOL)
                             {
             
-                                mModules.add(new Module(TAG.ZHUSHI, index - indexSign - 1));
+                                mModules.add(new Module(TAG.ZHUSHI_LINE, index - indexSign - 1));
                                 mModules.add(new Module(TAG.COMMON, 1));
                                 line++;
                                 break main;
@@ -89,49 +94,93 @@ public class JavaScript extends Token
                     {
                         addSymbol();
                         lengthSymbol = 2;
-                        //indexSign = index - 2;
+                        
     
                         hasEnd = true;
     
                         // 这里不把 Tag.EOL 算做 注释的一部分，会被独立开来。
-    
-    
-                        cyc : while (hasNext())
+                        if(hasNext())
                         {
-                            npeek = mChars[++index];
-                            lengthSymbol ++;
+                            if(mChars[1 + index] == '*' && hasNext() && mChars[index + 2] != '/')
+                            {
+                                cyc : while (hasNext())
+                                {
+                                    npeek = mChars[++index];
+                                    lengthSymbol ++;
         
-                            if(npeek == TAG.EOL)
-                            {
+                                    if(npeek == TAG.EOL)
+                                    {
             
-                                if(lengthSymbol > 1)mModules.add(new Module(TAG.ZHUSHI, lengthSymbol - 1));
-                                mModules.add(new Module(TAG.COMMON, 1));
-                                line++;
-                                lengthSymbol = 0;
-                            } else
-                            if(npeek == TAG.EOF)
-                            {
-                                if(lengthSymbol > 1)
-                                    mModules.add(new Module(TAG.ZHUSHI, lengthSymbol - 1));
-                                break cyc;
-                            } else
-                            if(npeek == '*')
-                            {
-                                if(next() == '/')
-                                {
-                                    hasEnd = true;
-                                    mModules.add(new Module(TAG.ZHUSHI, lengthSymbol + 1));
-                                    lengthSymbol = 0;
-                                    break cyc;
-                                } else
-                                {
-                                    last();
+                                        if(lengthSymbol > 1)mModules.add(new Module(TAG.ZHUSHI_DOC, lengthSymbol - 1));
+                                        mModules.add(new Module(TAG.COMMON, 1));
+                                        line++;
+                                        lengthSymbol = 0;
+                                    } else
+                                    if(npeek == TAG.EOF)
+                                    {
+                                        if(lengthSymbol > 1)
+                                            mModules.add(new Module(TAG.ZHUSHI_DOC, lengthSymbol - 1));
+                                        break cyc;
+                                    } else
+                                    if(npeek == '*')
+                                    {
+                                        if(next() == '/')
+                                        {
+                                            hasEnd = true;
+                                            mModules.add(new Module(TAG.ZHUSHI_DOC, lengthSymbol + 1));
+                                            lengthSymbol = 0;
+                                            break cyc;
+                                        } else
+                                        {
+                                            last();
+                                        }
+            
+                                    }
+        
+        
                                 }
+                            } else
+                            {
+                                cyc : while (hasNext())
+                                {
+                                    npeek = mChars[++index];
+                                    lengthSymbol ++;
+        
+                                    if(npeek == TAG.EOL)
+                                    {
             
+                                        if(lengthSymbol > 1)mModules.add(new Module(TAG.ZHUSHI_BLOCK, lengthSymbol - 1));
+                                        mModules.add(new Module(TAG.COMMON, 1));
+                                        line++;
+                                        lengthSymbol = 0;
+                                    } else
+                                    if(npeek == TAG.EOF)
+                                    {
+                                        if(lengthSymbol > 1)
+                                            mModules.add(new Module(TAG.ZHUSHI_BLOCK, lengthSymbol - 1));
+                                        break cyc;
+                                    } else
+                                    if(npeek == '*')
+                                    {
+                                        if(next() == '/')
+                                        {
+                                            hasEnd = true;
+                                            mModules.add(new Module(TAG.ZHUSHI_BLOCK, lengthSymbol + 1));
+                                            lengthSymbol = 0;
+                                            break cyc;
+                                        } else
+                                        {
+                                            last();
+                                        }
+            
+                                    }
+        
+        
+                                }
                             }
-        
-        
                         }
+                        
+                        
     
     
     
@@ -289,19 +338,140 @@ public class JavaScript extends Token
                 case '*':
                     if(next() == '/')
                     {
+                        
+                        addSymbol();
+                        boolean cache = true;
+                        int inMode = TAG.UNKNOW;
+                        
                         indexSign = mModules.size();
                         Module module;
-                        
-                        for(int i =0; i < indexSign; i++)
+    
+//                        if(useDocAnnotation)
+//                        {
+//                            int ci;
+//
+//                            annotation :
+//                            for(ci = index; ci > 0; ci--)
+//                            {
+//                                if(mChars[ci] == '*')
+//                                {
+//                                    if(ci > 1 && mChars[ci - 1] == '/')
+//                                    {
+//                                        if(ci < index && mChars[ci + 1] == '*')
+//                                        {
+//                                            inMode = TAG.ZHUSHI_DOC;
+//                                        } else
+//                                        {
+//                                            inMode = TAG.ZHUSHI_BLOCK;
+//                                        }
+//                                        break annotation;
+//                                    }
+//                                }
+//                            }
+//
+//                            if(inMode == TAG.UNKNOW)break;
+//
+//                            zhushi :
+//                            for(int i = indexSign; i > 0; )
+//                            {
+//                                module = mModules.get(--i);
+//
+//                                if(module.getFirst() != TAG.COMMON)
+//                                {
+//                                    if(module.getFirst() == TAG.ZHUSHI_BLOCK
+//                                    || module.getFirst() == TAG.ZHUSHI_DOC)
+//                                    {
+//                                        break zhushi;
+//                                    }
+//
+//                                    if(inMode == TAG.ZHUSHI_DOC)
+//                                    {
+//                                        cache = false;
+//                                        i++;
+//
+//                                        while (i < indexSign)
+//                                        {
+//                                            module = mModules.get(i);
+//
+//                                            if(module.getFirst() != TAG.COMMON)
+//                                            {
+//                                                module.setFirst(TAG.ZHUSHI_DOC);
+//                                                mModules.set(i, module);
+//                                            }
+//                                            i++;
+//                                        }
+//
+//                                        mModules.add(new Module(TAG.ZHUSHI_DOC, 2));
+//
+//                                        break zhushi;
+//                                    } else
+//                                    {
+//
+//                                    }
+//                                    module.setFirst(TAG.ZHUSHI_BLOCK);
+//                                    mModules.set(i, module);
+//                                }
+//                            }
+//
+//                            if(cache)
+//                            {
+//                                mModules.add(new Module(TAG.ZHUSHI_BLOCK, 2));
+//                            }
+//
+//
+//
+//                        }
+//                        else
                         {
-                            module = mModules.get(i);
-                            if(module.getFirst() != TAG.COMMON)
+                            zhushi :
+                            for(int i = indexSign; i > 0; )
                             {
-                                module.setFirst(TAG.ZHUSHI);
-                                mModules.set(i, module);
+                                module = mModules.get(--i);
+        
+                                if(module.getFirst() != TAG.COMMON)
+                                {
+                                    if(module.getFirst() == TAG.ZHUSHI_BLOCK)
+                                    {
+                                        break zhushi;
+                                    }
+                                    else
+                                    if(module.getFirst() == TAG.ZHUSHI_DOC)
+                                    {
+                                        cache = false;
+                                        i++;
+                
+                                        while (i < indexSign)
+                                        {
+                                            module = mModules.get(i);
+                    
+                                            if(module.getFirst() != TAG.COMMON)
+                                            {
+                                                module.setFirst(TAG.ZHUSHI_DOC);
+                                                mModules.set(i, module);
+                                            }
+                                            i++;
+                                        }
+                
+                                        mModules.add(new Module(TAG.ZHUSHI_DOC, 2));
+                
+                                        break zhushi;
+                                    }
+                                    module.setFirst(TAG.ZHUSHI_BLOCK);
+                                    mModules.set(i, module);
+                                }
                             }
+    
+                            if(cache)
+                            {
+                                mModules.add(new Module(TAG.ZHUSHI_BLOCK, 2));
+                            }
+    
                         }
-                        mModules.add(new Module(TAG.ZHUSHI, 2));
+                        
+                        
+                        
+                        
+                        
                     } else
                     {
                         symbolLength++;
@@ -373,6 +543,8 @@ public class JavaScript extends Token
         log.append(new Date());
         line = 1;
         mModules = new ArrayList<>();
+    
+        TAG.ZHUSHI_DOC = TAG.ZHUSHI_BLOCK;
     }
     
     @Override
@@ -484,6 +656,22 @@ public class JavaScript extends Token
         
     }
     
+    /**
+     * 是否启用DOC注释高亮，默认关闭，对于大文本存在效率过低问题，故启用可能存在BUG。
+     * @param flag
+     */
+    public void setUseDocAnnotation(boolean flag)
+    {
+        useDocAnnotation = flag;
+        if(flag)
+        {
+            TAG.ZHUSHI_DOC = TAG.ZHUSHI_BLOCK;
+            log.append("效率可能会减低\n");
+        }
+        else
+            TAG.ZHUSHI_DOC += 1;
+        
+    }
     
     boolean hasNext() {return index +1 < length;}
     
