@@ -30,5 +30,35 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Gradle: annotations-java5-15.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: preference-v7-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: appcompat-v7-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: support-fragment-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: recyclerview-v7-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: animated-vector-drawable-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: support-core-ui-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: support-core-utils-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: loader-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: support-vector-drawable-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: viewpager-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: coordinatorlayout-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: drawerlayout-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: slidingpanelayout-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: customview-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: swiperefreshlayout-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: asynclayoutinflater-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: support-compat-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: versionedparcelable-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: collections-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: runtime-1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: viewmodel-1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: cursoradapter-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: livedata-1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: livedata-core-1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: common-1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: interpolator-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: documentfile-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: localbroadcastmanager-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: print-28.0.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: support-annotations-28.0.0" level="project" />
   </component>
 </module>
