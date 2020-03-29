@@ -61,4 +61,12 @@ public class Av2bv
         }
         return String.valueOf(list);
     }
+    
+    public static void main(String[] args)
+    {
+        Av2bv av2bv = new Av2bv();
+        av2bv.init();
+        System.out.println(av2bv.toAV("BV17x411w7KC"));
+        System.out.println(av2bv.toBV(170001));
+    }
 }
