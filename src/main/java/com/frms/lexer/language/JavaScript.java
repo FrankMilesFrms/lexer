@@ -39,8 +39,8 @@ public class JavaScript extends Token
     private char[] mChars;
     private int[] mRowStartCount;
     private int[] mModulesRowsStart;
-    
     private int index; // 全文引索
+    
     private int symbolLength = 0;
     private int line;
     private int lineEnd;

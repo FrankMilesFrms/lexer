@@ -19,7 +19,9 @@ package com.frms.lexer;
 public class TAG
 {
     public static final char EOL = '\n',
-                             EOF = '\uFFFF';
+                             EOF = '\uFFFF',
+                             TAB = '\t',
+                             BLANK = ' ';
     
     public static final int COMMON = 0,
     
