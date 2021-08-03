@@ -110,31 +110,10 @@ public class Test {
     public static void main(String[] args)
     {
         JavaScript javaScript = new JavaScript();
-        set();
-        
         javaScript.set(text, rowStart, text.length());
         javaScript.token(start, startLine, end, endLine);
         
         System.out.println(javaScript.get().toString().replace("],", "],\n"));
     }
     
-    
-    public static void set()
-    {
-        if(text == null || text.length() == 0)return;
-        
-        end = text.length() -1;
-        char[] chars = text.toCharArray();
-        rowStart = new int[end + 1];
-        int l = 1, i = 0;
-        
-        for(char c : chars)
-        {
-           i++;
-            if(c == TAG.EOL)
-            {
-                rowStart[++l] =  i;
-            }
-        }
-    }
 }
